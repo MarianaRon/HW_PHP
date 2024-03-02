@@ -1,35 +1,37 @@
 <?php
-class TestController {
-    public function serve() {
-       $method = strtolower ($_SERVER[ 'REQUEST_METHOD'] ) ; // метод запиту - GET, POST, ...
-       $action = "do_{$method}"; 
-       // чи визначений у даному об'єкті метод з іменем $action (do_get)
-       if (method_exists ($this, $action)) {
-           // якщо визначений, то викликаємо
-           $this->$action(); //у PHP $this-> оов'язково 
-           // !! назву методу можна передати через змінну
-		   // $this->$action()  == $this->do_get()
-       }
-       else {
-        http_response_code (405);
-        echo "Method Not Allowed";
-       }
-    }
-    protected function connect_db_or_exit(){
-        try {
-            return new PDO('mysql:host=localhost;
-            dbname=spd_111_hw_php;charset=utf8mb4',
-            'root', '',[
-                PDO::ATTR_PERSISTENT => true,
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+include_once "ApiController.php";
 
-            ]);
-        } catch (PDOException $ex) {
-            http_response_code (500);
-            echo "Connection error: ". $ex -> getMessage();
-            exit; 
-        }
-    }
+class TestController extends Apicontroller{
+    // public function serve() {
+    //    $method = strtolower ($_SERVER[ 'REQUEST_METHOD'] ) ; // метод запиту - GET, POST, ...
+    //    $action = "do_{$method}"; 
+    //    // чи визначений у даному об'єкті метод з іменем $action (do_get)
+    //    if (method_exists ($this, $action)) {
+    //        // якщо визначений, то викликаємо
+    //        $this->$action(); //у PHP $this-> оов'язково 
+    //        // !! назву методу можна передати через змінну
+	// 	   // $this->$action()  == $this->do_get()
+    //    }
+    //    else {
+    //     http_response_code (405);
+    //     echo "Method Not Allowed";
+    //    }
+    // }
+    // protected function connect_db_or_exit(){
+    //     try {
+    //         return new PDO('mysql:host=localhost;
+    //         dbname=spd_111_hw_php;charset=utf8mb4',
+    //         'root', '',[
+    //             PDO::ATTR_PERSISTENT => true,
+    //             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+
+    //         ]);
+    //     } catch (PDOException $ex) {
+    //         http_response_code (500);
+    //         echo "Connection error: ". $ex -> getMessage();
+    //         exit; 
+    //     }
+    // }
     
     protected function do_get() {
         $db = $this->connect_db_or_exit();

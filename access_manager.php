@@ -52,7 +52,8 @@ $routes = [
 	'layout' => 'layout.php',
 	'regexp' => 'regexp.php',
 	'api'    => 'api.php',
-	'signup' => 'signup.php'
+	'signup' => 'signup.php',
+	'profileupdate' => 'profileupdate.php'	
 ] ;
 if( isset( $routes[ $uri ] ) ) {   // у маршрутах є відповідний запис
 	$page_body = $routes[ $uri ] ;

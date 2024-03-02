@@ -1,3 +1,33 @@
+<?php
+  session_start();
+  if(isset($_SESSION['user'])){
+    $user = $_SESSION['user'];
+    $interval = time() - $_SESSION['auth-moment'];
+    if($interval > 60) {
+      unset($_SESSION['user']);
+      unset($_SESSION['auth-moment']);
+      $user = null;
+    }
+    else{
+      $user = $_SESSION['user'];
+      $_SESSION['auth-moment'] = time();
+    }
+  }
+  else{
+    $user = null;
+  }
+
+  if(isset($_GET['logout']) && $_GET['logout'] === 'true') {
+    // Обнулення сесії
+    unset($_SESSION['user']);
+    unset($_SESSION['auth-moment']);
+    $user = null;
+
+    // Перенаправлення  на головну сторінку 
+    header('Location: /');
+    exit;
+  }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,18 +54,56 @@
                   'layout' => 'Шаблонізація',
                   'regexp' => 'Регулярні вирази',
                   'api'    => 'API', 
-                  'signup' => 'Реєстрація',
+                 // 'signup' => 'Реєстрація',
                 ] as $href => $name ) : ?>
                   <li <?= $uri==$href ? 'class="active"' : '' ?> ><a href="/<?= $href ?>"><?= $name ?></a></li>
               <?php endforeach ?>
+
+
+              <?php if($user != null){ ?>           
+          <li><a href="/profileupdate">
+            <img src="/avatar/<?php echo $user['avatar']; ?>" class="nav-avatar" />
+          </a></li>          
+          <li><a href="?logout=true"><i class="material-icons">logout</i></a></li>
+        <?php } else { ?> 
+          <!-- Modal Trigger -->
+          <li><a href="#auth-modal" class="modal-trigger"><i class="material-icons">key</i></a></li>
+          <li><a href="/signup"><i class="material-icons">person_add</i></a></li>
+        <?php } ?>
 
           </ul>
       </div>
      </nav>
   
-  <div class="container">
-    <?php include $page_body ; ?>
-               </div>
+ <!-- <?php echo $user['avatar']; ?> -->
+<!-- <?=var_export($user, true)?> -->
+<!-- Auth in <?= $interval ?> sec -->
+<div class="container">
+    <?php include $page_body ; ?>   
+  </div>  
+
+               <!-- Modal Structure -->
+  <div id="auth-modal" class="modal">
+  <div class="col s12">
+    <div class="modal-content">
+      <h4>Введіть e-mail та пароль для входу</h4>
+      <div class="input-field col s6">
+          <i class="material-icons prefix">email</i>
+          <input id="user-input-email" type="text" class="validate" name="auth-email">
+          <label for="user-input-email">Email</label>
+      </div>
+      <div class="input-field col s6">
+          <i class="material-icons prefix">lock</i>
+          <input id="user-input-password" type="password" class="validate" name="auth-password">
+          <label for="user-input-password">Password</label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-close btn-flat grey">Закрити</a>
+      <button class="btn-flat orange" style="margin-left:15px" id="auth-button">Вхід</button>
+    </div>
+  </div>
+</div>
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>  
